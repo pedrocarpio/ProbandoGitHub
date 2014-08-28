@@ -21,34 +21,51 @@ return 0;
 }
 int main(int argc, char** argv)
 {
-if (argc != 7)
+const char* arg = argv[i];
+if ('-' == arg[0])
 {
-fprintf(stderr, "Usage: %s power_ball (5 white balls)\n", argv[0]);
-return -1;
+if (0 == strcmp(arg, "-favorite"))
+{
+favorite = 1;
 }
-int power_ball = atoi(argv[1]);
-int white_balls[5];
-for (int i=0; i<5; i++)
+else
+{
+goto usage_error;
+}
+}
+else
 {
 char* endptr = NULL;
-long val = strtol(argv[1+i], &endptr, 10);
+long val = strtol(arg, &endptr, 10);
 if (*endptr)
 {
-fprintf(stderr, "Invalid arguments\n");
-return -1;
+goto usage_error;
 }
-white_balls[i] = (int) val;
+balls[count_balls++] = (int) val;
 }
-int result = calculate_result(white_balls, power_ball);
+}
+if (6 != count_balls)
+{
+goto usage_error;
+}
+int power_ball = balls[5];
+int result = calculate_result(balls, power_ball);
 if (result < 0)
 {
-fprintf(stderr, "Invalid arguments\n");
-return -1;
+goto usage_error;
 }
 if (LUCKY_NUMBER == power_ball)
 {
-result = result * 2; //Probabilidad doble
+result = result * 2;
+}
+if (favorite)
+{
+result = result * 2;
 }
 printf("%d percent chance of winning\n", result);
 return 0;
+usage_error:
+fprintf(stderr, "Usage: %s [-favorite] (5 white balls)
+power_ball\n", argv[0]);
+return -1;
 }
